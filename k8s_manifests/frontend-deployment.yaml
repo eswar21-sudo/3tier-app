@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: workshop
+  namespace: rds-webapp
   labels:
     role: frontend
     env: demo
@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: public.ecr.aws/l0l7e4u1/3-tier-frontend:latest
+        image: 337909737275.dkr.ecr.us-east-1.amazonaws.com/frontend:3tier
         imagePullPolicy: Always
         env:
           - name: REACT_APP_BACKEND_URL

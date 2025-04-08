@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: rds-webapp
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: 337909737275.dkr.ecr.us-east-1.amazonaws.com/backend:3tier
+        ports:
+        - containerPort: 8080
+        env:
+          - name: DB_HOST
+            value: webapp.c50wyk0s40tz.us-east-1.rds.amazonaws.com            # e.g. mydb.abc123xyz.us-east-1.rds.amazonaws.com
+          - name: DB_PORT
+            value: "3306"
+          - name: DB_NAME
+            value: mydatabase
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: rds-secret
+                key: username
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: rds-secret
+                key: password
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
