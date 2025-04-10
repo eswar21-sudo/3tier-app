@@ -1,19 +1,30 @@
-const tasks = require("./routes/tasks");
-const connection = require("./db");
-const cors = require("cors");
-const express = require("express");
+// index.js
+
+const express = require('express');
+const { Task, sequelize } = require('./models/Task');
+
 const app = express();
-
-connection();
-
 app.use(express.json());
-app.use(cors());
 
-app.get('/ok', (req, res) => {
-    res.status(200).send('ok')
-  })
+// Test DB connection
+sequelize.authenticate()
+  .then(() => console.log('Database connected.'))
+  .catch(err => console.error('Connection error:', err));
 
-app.use("/api/tasks", tasks);
+// Sync model
+sequelize.sync()
+  .then(() => console.log('Tables synced.'))
+  .catch(err => console.error('Sync error:', err));
 
-const port = process.env.PORT || 8080;
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+// Example route
+app.post('/tasks', async (req, res) => {
+  try {
+    const newTask = await Task.create(req.body);
+    res.status(201).json(newTask);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
